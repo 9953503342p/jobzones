@@ -193,7 +193,7 @@ app.post('/candidate-signup', async (req, res) => {
     });
 
     await newUser.save();
-    res.cookie('candidateId', newUser._id, {
+    res.cookie('candidateId', newUser._id.toString(), {
       maxAge: 3600000,  // 1 hour
       httpOnly: true,
       secure: true, // Required for HTTPS (must be enabled in production)
@@ -231,7 +231,7 @@ app.post('/employer-signup', async (req, res) => {
       phone,
       password: hashedPassword,
     });
-    res.cookie('employeeid', newUser._id, {
+    res.cookie('employeeid', newUser._id.toString(), {
       maxAge: 3600000,  
       httpOnly: true,  
       secure: true,   // Required for HTTPS  
@@ -269,7 +269,7 @@ app.post('/candidate-login', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
-    res.cookie("candidateId", user._id, {
+    res.cookie("candidateId", user._id.toString(), {
       maxAge: 3600000, // 1 hour
       httpOnly: true,
       secure: true, 
@@ -306,7 +306,7 @@ app.post('/employer-login', async (req, res) => {
       return res.status(401).json({ message: 'Incorrect password.' });
     }
 
-    res.cookie("employeeid", user._id, {
+    res.cookie("employeeid", user._id.toString(), {
       maxAge: 3600000,  
       httpOnly: true,
       secure: true,    

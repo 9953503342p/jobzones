@@ -125,12 +125,9 @@ app.set('trust proxy', 1); // Trust first proxy if you're behind one
 
 app.use(session({
   secret: "your_secret_key", 
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: "mongodb+srv://py5150954:kmTmw0WWTR0sMR6e@cluster0.bfelm.mongodb.net/",
-    collectionName: "sessions",
-  }),
+  resave: true,
+  saveUninitialized: true,
+
   cookie: {
     secure: true,     // Must be true for HTTPS
     httpOnly: true,   // Prevent JavaScript access

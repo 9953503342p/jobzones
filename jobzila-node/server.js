@@ -128,7 +128,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: "",
+    mongoUrl: "mongodb+srv://py5150954:kmTmw0WWTR0sMR6e@cluster0.bfelm.mongodb.net/",
     collectionName: "sessions",
   }),
   cookie: {

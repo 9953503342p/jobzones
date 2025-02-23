@@ -192,9 +192,12 @@ app.post('/candidate-signup', async (req, res) => {
     });
 
     await newUser.save();
-
-    // Setting the userId cookie after successful signup
-    res.cookie('candidateId', newUser._id, { maxAge: 3600000, httpOnly: true });
+    res.cookie('candidateId', newUser._id, {
+      maxAge: 3600000,  // 1 hour
+      httpOnly: true,
+      secure: true, // Required for HTTPS (must be enabled in production)
+      sameSite: "None", // Required for cross-origin cookies
+    });
 
     // Returning the user ID in the response
     res.status(201).json({ message: 'User created successfully', _id: newUser._id });
@@ -227,9 +230,13 @@ app.post('/employer-signup', async (req, res) => {
       phone,
       password: hashedPassword,
     });
-
-
-    res.cookie('employeeid', newUser._id, { maxAge: 3600000, httpOnly: true });
+    res.cookie('employeeid', newUser._id, {
+      maxAge: 3600000,  
+      httpOnly: true,  
+      secure: true,   // Required for HTTPS  
+      sameSite: "None",  // Required for cross-origin cookies  
+    });
+    
     await newUser.save();
 
     res.status(201).json({ message: 'User created successfully', id: newUser._id });
@@ -261,12 +268,11 @@ app.post('/candidate-login', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
-
     res.cookie("candidateId", user._id, {
       maxAge: 3600000, // 1 hour
       httpOnly: true,
-      secure: false,  // Use `true` only in production
-      sameSite: "lax", // Adjust based on requirements
+      secure: true, 
+      sameSite: "None", 
     });
     console.log(user._id)
 
@@ -299,8 +305,12 @@ app.post('/employer-login', async (req, res) => {
       return res.status(401).json({ message: 'Incorrect password.' });
     }
 
-    // Store user session
-    res.cookie('employeeid', user._id, { maxAge: 3600000, httpOnly: true });
+    res.cookie("employeeid", user._id, {
+      maxAge: 3600000,  
+      httpOnly: true,
+      secure: true,    
+      sameSite: "None", 
+    });
 
     return res.status(200).json({ message: 'Login successful.', id: user._id });
   } catch (err) {

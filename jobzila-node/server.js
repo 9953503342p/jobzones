@@ -20,7 +20,7 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const app = express();
 
-app.use(cookieParser());
+
 
 const storage1 = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -115,6 +115,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 // Set up body parsing middleware
 app.use(express.json());

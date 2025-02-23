@@ -132,7 +132,7 @@ app.use(session({
     secure: true,     // Must be true for HTTPS
     httpOnly: true,   // Prevent JavaScript access
     sameSite: "None",
-    domain: ".jobzonewallha.com" 
+    domain: ".jobzones.onrender.com" 
   }
 }));
 
@@ -206,7 +206,7 @@ app.post('/candidate-signup', async (req, res) => {
       httpOnly: true,
       secure: true, // Required for HTTPS (must be enabled in production)
       sameSite: "None", 
-    domain: ".jobzonewallha.com" 
+    domain: ".jobzones.onrender.com" 
     });
 
     // Returning the user ID in the response
@@ -245,7 +245,7 @@ app.post('/employer-signup', async (req, res) => {
       httpOnly: true,  
       secure: true,   // Required for HTTPS  
       sameSite: "None",  
-     domain: ".jobzonewallha.com" 
+     domain: ".jobzones.onrender.com" 
    
     });
     
@@ -285,7 +285,7 @@ app.post('/candidate-login', async (req, res) => {
       httpOnly: true,
       secure: true, 
       sameSite: "None", 
-     domain: ".jobzonewallha.com" 
+     domain: ".jobzones.onrender.com" 
     });
     console.log(user._id)
 
@@ -323,7 +323,7 @@ app.post('/employer-login', async (req, res) => {
       httpOnly: true,
       secure: true,    
       sameSite: "None", 
-    domain: ".jobzonewallha.com" 
+    domain: ".jobzones.onrender.com" 
     });
 
     return res.status(200).json({ message: 'Login successful.', id: user._id });

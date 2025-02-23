@@ -110,8 +110,10 @@ const storage2 = multer.diskStorage({
 const upload2 = multer({ storage: storage2 });
 
 const corsOptions = {
-  origin:'https://jobzonwallah.com' ,  // Specify the allowed frontend origin
-  credentials: true,                // Allow credentials (cookies, headers, etc.)
+ origin: "https://jobzonwallah.com/",  // Use frontend URL
+  credentials: true,  // Allow credentials (cookies, sessions)
+  methods: ["GET", "POST", "PUT", "DELETE"],  // Allow specific methods
+  allowedHeaders: ["Content-Type", "Authorization"]  // Allow necessary headers          // Allow credentials (cookies, headers, etc.)
 };
 
 app.use(cors(corsOptions));

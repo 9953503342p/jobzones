@@ -206,7 +206,7 @@ app.post('/candidate-signup', async (req, res) => {
       httpOnly: true,
       secure: true, // Required for HTTPS (must be enabled in production)
       sameSite: "None", // Required for cross-origin cookies
-      domain: 'jobzones.onrender.com'
+      domain: 'jobzonwallah.com'
     });
 
     // Returning the user ID in the response
@@ -245,7 +245,7 @@ app.post('/employer-signup', async (req, res) => {
       httpOnly: true,  
       secure: true,   // Required for HTTPS  
       sameSite: "None",  // Required for cross-origin cookies  
-      domain: 'jobzones.onrender.com'
+      domain: 'jobzonwallah.com'
     });
     
     await newUser.save();
@@ -284,7 +284,7 @@ app.post('/candidate-login', async (req, res) => {
       httpOnly: true,
       secure: true, 
       sameSite: "None", 
-      domain: 'jobzones.onrender.com'
+      domain: 'jobzonwallah.com'
     });
     console.log(user._id)
 
@@ -322,7 +322,7 @@ app.post('/employer-login', async (req, res) => {
       httpOnly: true,
       secure: true,    
       sameSite: "None", 
-      domain: 'jobzones.onrender.com'
+      domain: 'jobzonwallah.com'
     });
 
     return res.status(200).json({ message: 'Login successful.', id: user._id });

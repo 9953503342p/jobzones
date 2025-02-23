@@ -124,18 +124,20 @@ app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1); // Trust first proxy if you're behind one
 
 app.use(session({
-  secret: 'your_secret_key',
+  secret: "your_secret_key", 
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: "",
+    collectionName: "sessions",
+  }),
   cookie: {
-    secure: true,           // Cookie will only be sent over HTTPS
-    httpOnly: true,         // Cookie is not accessible via JavaScript
-    sameSite: 'None',       // Required for cross-origin cookies
-    maxAge: 3600000,        // 1 hour expiration
-    // domain: 'jobzones.onrender.com', // Optionally, if needed for your setup
-  },
-  // Use a production session store instead of MemoryStore
+    secure: true,     // Must be true for HTTPS
+    httpOnly: true,   // Prevent JavaScript access
+    sameSite: "None", // Required for cross-origin cookies
+  }
 }));
+
 
 app.use('/uploads', express.static('uploads'));
 
@@ -206,7 +208,6 @@ app.post('/candidate-signup', async (req, res) => {
       httpOnly: true,
       secure: true, // Required for HTTPS (must be enabled in production)
       sameSite: "None", // Required for cross-origin cookies
-      domain: 'jobzonwallah.com'
     });
 
     // Returning the user ID in the response
@@ -245,7 +246,7 @@ app.post('/employer-signup', async (req, res) => {
       httpOnly: true,  
       secure: true,   // Required for HTTPS  
       sameSite: "None",  // Required for cross-origin cookies  
-      domain: 'jobzonwallah.com'
+   
     });
     
     await newUser.save();
@@ -284,7 +285,6 @@ app.post('/candidate-login', async (req, res) => {
       httpOnly: true,
       secure: true, 
       sameSite: "None", 
-      domain: 'jobzonwallah.com'
     });
     console.log(user._id)
 
@@ -322,7 +322,6 @@ app.post('/employer-login', async (req, res) => {
       httpOnly: true,
       secure: true,    
       sameSite: "None", 
-      domain: 'jobzonwallah.com'
     });
 
     return res.status(200).json({ message: 'Login successful.', id: user._id });

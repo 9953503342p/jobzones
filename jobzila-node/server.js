@@ -121,12 +121,20 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Set up session management
+app.set('trust proxy', 1); // Trust first proxy if you're behind one
+
 app.use(session({
-  secret: 'your_secret_key', // Use a strong secret key
+  secret: 'your_secret_key',
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Set to `true` if using HTTPS
+  saveUninitialized: false,
+  cookie: {
+    secure: true,           // Cookie will only be sent over HTTPS
+    httpOnly: true,         // Cookie is not accessible via JavaScript
+    sameSite: 'None',       // Required for cross-origin cookies
+    maxAge: 3600000,        // 1 hour expiration
+    // domain: 'jobzones.onrender.com', // Optionally, if needed for your setup
+  },
+  // Use a production session store instead of MemoryStore
 }));
 
 app.use('/uploads', express.static('uploads'));

@@ -111,7 +111,7 @@ const upload2 = multer({ storage: storage2 });
 
 app.use(
     cors({
-        origin: "https://jobzones.onrender.com",  // New domain
+        origin: "https://jobzonwallah.com",  // New domain
         credentials: true,
     })
 );

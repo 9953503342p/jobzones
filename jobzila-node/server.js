@@ -109,26 +109,12 @@ const storage2 = multer.diskStorage({
 
 const upload2 = multer({ storage: storage2 });
 
-const allowedOrigins = [
-  'https://jobzonwallah.com',
-  'https://jobzones.onrender.com'
-];
-
-// Use dynamic origin check for CORS
-app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      // Origin is allowed
-      return callback(null, true);
-    } else {
-      // Origin not allowed
-      return callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true, // Enable sending cookies or other credentials
-}));
+app.use(
+    cors({
+        origin: "https://jobzones.onrender.com",  // New domain
+        credentials: true,
+    })
+);
 
 app.use(cookieParser());
 

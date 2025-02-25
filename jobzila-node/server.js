@@ -110,10 +110,10 @@ const storage2 = multer.diskStorage({
 const upload2 = multer({ storage: storage2 });
 
 app.use(
-    cors({
-        origin: "https://jobzonwallah.com",  // New domain
-        credentials: true,
-    })
+  cors({
+    origin: "https://jobzonwallah.com",  // Ensure this matches your frontend
+    credentials: true,
+  })
 );
 
 app.use(cookieParser());
@@ -125,17 +125,17 @@ app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1); // Trust first proxy if you're behind one
 
 app.use(session({
-  secret: "your_secret_key", 
+  secret: "your_secret_key",
   resave: true,
   saveUninitialized: true,
-
   cookie: {
-    secure: true,     // Must be true for HTTPS
-    httpOnly: true,   // Prevent JavaScript access
+    secure: true,      // Required for HTTPS
+    httpOnly: true,    // Prevent JavaScript access
     sameSite: "None",
-    domain: ".jobzones.onrender.com" 
-  }
+    domain: ".jobzones.onrender.com", // Ensure it matches frontend
+  },
 }));
+
 
 
 app.use('/uploads', express.static('uploads'));
@@ -177,89 +177,73 @@ mongoose.connect(url)
   .catch((err) => console.error('Database connection error:', err));
 
 
+// Candidate Signup
 app.post('/candidate-signup', async (req, res) => {
   const { Username, Password, Email, Phone } = req.body;
-
-  // Log the incoming request body to check if fields are received
-  console.log(req.body);
 
   if (!Username || !Password || !Email || !Phone) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
   try {
-    const existingUser = await candidatesignup.findOne({ Username, Email });
+    const existingUser = await candidatesignup.findOne({ $or: [{ Username }, { Email }] });
     if (existingUser) {
-      return res.status(409).json({ message: 'Email and Username already registered.' });
+      return res.status(409).json({ message: 'Email or Username already registered.' });
     }
 
     const hashedPassword = await bcrypt.hash(Password, 10);
-    const newUser = new candidatesignup({
-      Username,
-      Email,
-      Phone,
-      Password: hashedPassword,
-    });
-
+    const newUser = new candidatesignup({ Username, Email, Phone, Password: hashedPassword });
     await newUser.save();
+
     res.cookie('candidateId', newUser._id.toString(), {
-      maxAge: 3600000,  // 1 hour
+      maxAge: 3600000,
       httpOnly: true,
-      secure: true, // Required for HTTPS (must be enabled in production)
-      sameSite: "None", 
-    domain: ".jobzones.onrender.com" 
+      secure: true,
+      sameSite: "None",
+      domain: ".jobzones.onrender.com",
     });
 
-    // Returning the user ID in the response
     res.status(201).json({ message: 'User created successfully', _id: newUser._id });
-    console.log(newUser._id)
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Internal Server ' });
+    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
+// Employer Signup
 app.post('/employer-signup', async (req, res) => {
   const { username, password, email, phone } = req.body;
-
-
 
   if (!username || !password || !email || !phone) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
   try {
-    const existingUser = await Employorsignup.findOne({ username, email });
+    const existingUser = await Employorsignup.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      return res.status(409).json({ message: ' user already registered.' });
+      return res.status(409).json({ message: 'User already registered.' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new Employorsignup({
-      username,
-      email,
-      phone,
-      password: hashedPassword,
-    });
-    res.cookie('employeeid', newUser._id.toString(), {
-      maxAge: 3600000,  
-      httpOnly: true,  
-      secure: true,   // Required for HTTPS  
-      sameSite: "None",  
-     domain: ".jobzones.onrender.com" 
-   
-    });
-    
+    const newUser = new Employorsignup({ username, email, phone, password: hashedPassword });
     await newUser.save();
+
+    res.cookie('employeeid', newUser._id.toString(), {
+      maxAge: 3600000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      domain: ".jobzones.onrender.com",
+    });
 
     res.status(201).json({ message: 'User created successfully', id: newUser._id });
   } catch (err) {
-    console.log(err)
-
+    console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
+// Candidate Login
 app.post('/candidate-login', async (req, res) => {
   const { Username, Password } = req.body;
 
@@ -268,27 +252,23 @@ app.post('/candidate-login', async (req, res) => {
   }
 
   try {
-    // Search for the user in the candidate collection
     const user = await candidatesignup.findOne({ Username });
-
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if the password matches
     const isPasswordValid = await bcrypt.compare(Password, user.Password);
-
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
+
     res.cookie("candidateId", user._id.toString(), {
-      maxAge: 3600000, // 1 hour
+      maxAge: 3600000,
       httpOnly: true,
-      secure: true, 
-      sameSite: "None", 
-     domain: ".jobzones.onrender.com" 
+      secure: true,
+      sameSite: "None",
+      domain: ".jobzones.onrender.com",
     });
-    console.log(user._id)
 
     res.status(200).json({ message: 'Login successful', _id: user._id });
   } catch (err) {
@@ -297,6 +277,7 @@ app.post('/candidate-login', async (req, res) => {
   }
 });
 
+// Employer Login
 app.post('/employer-login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -305,35 +286,30 @@ app.post('/employer-login', async (req, res) => {
   }
 
   try {
-    // Find user in the database
-    const user = await Employorsignup.findOne({ username: username });
-
+    const user = await Employorsignup.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Incorrect password.' });
     }
 
     res.cookie("employeeid", user._id.toString(), {
-      maxAge: 3600000,  
+      maxAge: 3600000,
       httpOnly: true,
-      secure: true,    
-      sameSite: "None", 
-    domain: ".jobzones.onrender.com" 
+      secure: true,
+      sameSite: "None",
+      domain: ".jobzones.onrender.com",
     });
 
     return res.status(200).json({ message: 'Login successful.', id: user._id });
   } catch (err) {
     console.error("Error during login:", err);
-    return res.status(500).json({ message: 'Internal server error. Please try again later.' });
+    return res.status(500).json({ message: 'Internal server error.' });
   }
 });
-
 
 
 const validator = require('validator'); // for email validation

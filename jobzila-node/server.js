@@ -109,12 +109,11 @@ const storage2 = multer.diskStorage({
 
 const upload2 = multer({ storage: storage2 });
 
-app.use(
-  cors({
-    origin: ["https://jobzonwallah.com","https://jobzones.onrender.com" ] // Ensure this matches your frontend
+app.use(cors({
+    origin: ["https://jobzonwallah.com"],
     credentials: true,
-  })
-);
+}));
+
 
 app.use(cookieParser());
 
@@ -124,17 +123,21 @@ app.use(express.urlencoded({ extended: true }));
 
 app.set('trust proxy', 1); // Trust first proxy if you're behind one
 
-app.use(session({
-  secret: "your_secret_key",
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    secure: true,      // Required for HTTPS
-    httpOnly: true,    // Prevent JavaScript access
-    sameSite: "None",
-    domain: ".jobzones.onrender.com", // Ensure it matches frontend
-  },
-}));
+app.use(
+    session({
+        name: "connect.sid",
+        secret: "your-secret-key",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            domain: "jobzonwallah.com",  // Ensure all cookies use this domain
+            path: "/",
+            secure: true,  // Required for HTTPS
+            httpOnly: true,
+            sameSite: "None",
+        },
+    })
+);
 
 
 
